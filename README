@@ -1,0 +1,19 @@
+=================================
+Inshinga Readme
+=================================
+
+Experiments in Kinyarwanda verb parsing.
+
+All code is available under GPLv3. Copyright Rowan Seymour 2011
+
+Usage
+=================================
+
+1. First create a parser and initialize it:
+
+Parser parser = new Parser();
+parser.initialize();
+
+2. Then parse a verb with or without stem checking:
+
+List<ParserResult> results = parser.parse("ndakora", true);
