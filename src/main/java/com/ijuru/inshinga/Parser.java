@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import au.com.bytecode.opencsv.CSVReader;
@@ -35,9 +36,9 @@ import au.com.bytecode.opencsv.CSVReader;
 public class Parser {
 	
 	/**
-	 * Map of conjugation prefixes
+	 * Map of prefixes to conjugations
 	 */
-	private class PrefixMap extends TreeMap<String, List<Conjugation>> {
+	private class PrefixMap extends TreeMap<Prefix, List<Conjugation>> {
 		private static final long serialVersionUID = 1487104274039497957L;
 	}
 	
@@ -72,21 +73,24 @@ public class Parser {
 				for (ConjObject object : ConjObject.values()) {
 					
 					Conjugation conjugation = new Conjugation(subject, tense, object);
-					String prefix = conjugation.getForm();
+					Set<Prefix> prefixes = conjugation.getPrefixes();
 					
-					PrefixMap map = prefixesByLength[prefix.length()];
-					List<Conjugation> conjs = null;
-					
-					// Get the list of possible conjugations for this prefix
-					// or make one if there's no list yet
-					if (!map.containsKey(prefix)) {
-						conjs = new ArrayList<Conjugation>();
-						map.put(prefix, conjs);
-					}
-					else
-						conjs = map.get(prefix);
+					for (Prefix prefix : prefixes) {
+						String prefixForm = prefix.getForm();
+						PrefixMap map = prefixesByLength[prefixForm.length()];
+						List<Conjugation> conjs = null;
 						
-					conjs.add(conjugation);
+						// Get the list of possible conjugations for this prefix
+						// or make one if there's no list yet
+						if (!map.containsKey(prefix)) {
+							conjs = new ArrayList<Conjugation>();
+							map.put(prefix, conjs);
+						}
+						else
+							conjs = map.get(prefix);
+							
+						conjs.add(conjugation);
+					}
 				}
 			}
 		}
@@ -156,14 +160,11 @@ public class Parser {
 			if (checkStem && verbs == null)
 				continue;
 			
-			// Apply reverse spelling rules
-			inputPrefix = Spelling.reverse(inputPrefix);
-			
 			// Get map of prefixes to conjugations for this prefix length
 			PrefixMap prefixMap = prefixesByLength[pl];
 			
-			for (String prefix : prefixMap.keySet()) {
-				if (inputPrefix.equals(prefix)) {
+			for (Prefix prefix : prefixMap.keySet()) {
+				if (inputPrefix.equals(prefix.getForm()) && prefix.canPrecede(inputStem)) {
 					List<Conjugation> conjugations = prefixMap.get(prefix);
 					
 					for (Conjugation conjugation : conjugations)

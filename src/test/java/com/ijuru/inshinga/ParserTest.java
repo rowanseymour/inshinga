@@ -42,7 +42,16 @@ public class ParserTest extends TestCase {
 	 * Test for parse method with stem checking
 	 */
 	public void testParse_withStemCheck() {	
-		List<ParserResult> results = parser.parse("ndakora", true);
+		
+		List<ParserResult> results = parser.parse("mfasha", true);
+		assertEquals(2, results.size());
+		assertEquals(new ParserResult(new Conjugation(ConjSubject.NONE, ConjTense.NONE, ConjObject.I), "fasha"), results.get(0));
+		assertEquals(new ParserResult(new Conjugation(ConjSubject.I, ConjTense.NONE, ConjObject.NONE), "fasha"), results.get(1));
+		
+		results = parser.parse("nfasha", true);
+		assertEquals(0, results.size());
+
+		results = parser.parse("ndakora", true);
 		assertEquals(1, results.size());
 		assertEquals(new ParserResult(new Conjugation(ConjSubject.I, ConjTense.PRESENT, ConjObject.NONE), "kora"), results.get(0));
 		

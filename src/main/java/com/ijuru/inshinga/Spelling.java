@@ -19,10 +19,28 @@
 
 package com.ijuru.inshinga;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 /**
  * Spelling utility methods
  */
 public class Spelling {
+	
+	private static final char[] VOWELS = new char[]{ 'a', 'e', 'i', 'o', 'u' };
+	private static final char[] LABIAL_CONSONANTS = new char[]{ 'b', 'f', 'm', 'p', 'v' };
+	private static final char[] FRONT_CONSONANTS = new char[]{ 'c', 'f', 'h', 'k', 'p', 's', 't' };
+	
+	private static final Map<String, String> changeDownRules = new HashMap<String, String>();
+	static {
+		changeDownRules.put("ka", "ga");
+		changeDownRules.put("ki", "gi");
+		changeDownRules.put("ku", "gu");
+		changeDownRules.put("ta", "da");
+		changeDownRules.put("tu", "du");
+	}
 	
 	/**
 	 * Corrects spelling
@@ -34,11 +52,42 @@ public class Spelling {
 	}
 	
 	/**
-	 * Reverses spelling changes that depend on the stem
+	 * Applies change down rule to the last consonant
 	 * @param input the input
-	 * @return
+	 * @return the changed down input
 	 */
-	public static String reverse(String input) {
-		return input.replace("gu", "ku");
+	public static String changeDown(String input) {
+		for (Entry<String, String> rule : changeDownRules.entrySet()) {
+			if (input.endsWith(rule.getKey()))
+				input = input.replace(rule.getKey(), rule.getValue());
+		}
+		return input;
+	}
+	
+	/**
+	 * Checks if character is a labial consonant
+	 * @param ch the character
+	 * @return true if its a labial
+	 */
+	public static boolean isVowel(char ch) {
+		return Arrays.binarySearch(VOWELS, ch) >= 0;
+	}
+	
+	/**
+	 * Checks if character is a labial consonant
+	 * @param ch the character
+	 * @return true if its a labial
+	 */
+	public static boolean isLabialConsonant(char ch) {
+		return Arrays.binarySearch(LABIAL_CONSONANTS, ch) >= 0;
+	}
+	
+	/**
+	 * Checks if character is a labial consonant
+	 * @param ch the character
+	 * @return true if its a labial
+	 */
+	public static boolean isFrontConsonant(char ch) {
+		return Arrays.binarySearch(FRONT_CONSONANTS, ch) >= 0;
 	}
 }

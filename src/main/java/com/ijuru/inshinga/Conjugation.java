@@ -19,6 +19,9 @@
 
 package com.ijuru.inshinga;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * A verb conjugation
  */
@@ -31,23 +34,35 @@ public class Conjugation {
 	public static Conjugation IMPERATIVE = new Conjugation(ConjSubject.NONE, ConjTense.NONE, ConjObject.NONE);
 	
 	public Conjugation(ConjSubject subject, ConjTense tense, ConjObject object) {
-		if (subject == null || tense == null || object == null)
-			throw new IllegalArgumentException("None of the constructor parameters can be null");
-		
 		this.subject = subject;
 		this.tense = tense;
 		this.object = object;
 	}
 	
 	/**
-	 * Gets the form
-	 * @return the form
+	 * Gets the possible verb prefixes for this conjugation
+	 * @return the prefixes
 	 */
-	public String getForm() {
-		String raw = subject.getForm() + tense.getForm() + object.getForm();
+	public Set<Prefix> getPrefixes() {
+		Set<Prefix> prefixes = new HashSet<Prefix>();
 		
-		// Apply spelling correction rules
-		return Spelling.correct(raw);
+		// Apply internal spelling correction rules to raw form
+		String rawForm = subject.getForm() + tense.getForm() + object.getForm();
+		String normalForm = Spelling.correct(rawForm);
+		
+		// Add normal form
+		prefixes.add(new Prefix(normalForm));
+		
+		// Add pre-labial form
+		if (normalForm.endsWith("n")) {
+			String labialForm = normalForm.substring(0, normalForm.length() - 1) + "m";
+			prefixes.add(new Prefix(labialForm));
+		}
+		
+		// Add pre-front-consonant form
+		prefixes.add(new Prefix(Spelling.changeDown(normalForm)));
+		
+		return prefixes;
 	}
 
 	/**

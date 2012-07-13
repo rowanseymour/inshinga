@@ -19,33 +19,21 @@
 
 package com.ijuru.inshinga;
 
-import java.util.ArrayList;
-import java.util.List;
+import junit.framework.TestCase;
 
 /**
- * General utility methods
+ * Unit test for utils
  */
-public class Utils {
+public class PrefixTest extends TestCase {
 	
 	/**
-	 * Parses a delimited string and returns non-empty values
-	 * @param input the input
-	 * @param delimiter the delimiter
-	 * @return the values
+	 * Test for parseDelimitedStrings
 	 */
-	public static List<String> parseDelimitedStrings(String input, String delimiter) {
-		List<String> vals = new ArrayList<String>();
-		
-		// Skip parsing empty strings
-		if (input == null || input.length() == 0)
-			return vals;
-		
-		for (String token : input.split(delimiter)) {
-			token = token.trim();
-			
-			if (token.length() > 0)
-				vals.add(token);
-		}
-		return vals;
+	public void test_canPrecede() {
+		// Test labial stems
+		assertTrue(new Prefix("m").canPrecede("fasha"));
+		assertFalse(new Prefix("n").canPrecede("fasha"));
+		assertTrue(new Prefix("m").canPrecede("baga"));
+		assertFalse(new Prefix("n").canPrecede("baga"));
 	}
 }
