@@ -106,7 +106,9 @@ public class Parser {
 			CSVReader reader = new CSVReader(new InputStreamReader(in));
 		    String[] line;
 		    while ((line = reader.readNext()) != null) {
-		        Verb verb = new Verb(line[0], line[1]);
+		    	String presentStem = line[0];
+		    	String modifier = line[1];
+		    	Verb verb = new Verb(presentStem, Spelling.applyVerbModifier(presentStem, modifier));
 		        verb.setMeanings(Utils.parseDelimitedStrings(line[2], ","));
 		        
 		        addVerb(verb);

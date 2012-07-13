@@ -43,6 +43,27 @@ public class SpellingTest extends TestCase {
 	}
 	
 	/**
+	 * Test for applyVerbModifier
+	 */
+	public void test_applyVerbModifier() {
+		assertNull(Spelling.applyVerbModifier("zi", null));
+		assertEquals("koze", Spelling.applyVerbModifier("kora", "-ze"));
+		assertEquals("kunze", Spelling.applyVerbModifier("kunda", "-nze"));
+		assertEquals("giye", Spelling.applyVerbModifier("jya", "giye"));
+		assertEquals("ciye inyuma", Spelling.applyVerbModifier("ca inyuma", "-ciye"));
+		assertEquals("igerejeho", Spelling.applyVerbModifier("igerezaho", "-jeho"));
+	}
+	
+	/**
+	 * Test for stripVerbStem
+	 */
+	public void test_stripVerbStem() {
+		assertEquals("ko", Spelling.stripVerbStem("kora"));
+		assertEquals("ku", Spelling.stripVerbStem("kunda"));
+		assertEquals("", Spelling.stripVerbStem("jyayo"));
+	}
+	
+	/**
 	 * Test for isVowel
 	 */
 	public void test_isVowel() {

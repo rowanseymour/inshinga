@@ -31,6 +31,11 @@ public class Verb {
 	protected String pastStem;
 	protected List<String> meanings = new ArrayList<String>();
 	
+	/**
+	 * Constructs a verb
+	 * @param presentStem the present tense stem
+	 * @param pastStem the past tense stem
+	 */
 	public Verb(String presentStem, String pastStem) {
 		this.presentStem = presentStem;
 		this.pastStem = pastStem;

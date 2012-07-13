@@ -32,6 +32,7 @@ public class Spelling {
 	private static final char[] VOWELS = new char[]{ 'a', 'e', 'i', 'o', 'u' };
 	private static final char[] LABIAL_CONSONANTS = new char[]{ 'b', 'f', 'm', 'p', 'v' };
 	private static final char[] FRONT_CONSONANTS = new char[]{ 'c', 'f', 'h', 'k', 'p', 's', 't' };
+	private static final String[] SUFFIXES = new String[]{ "mo", "ho", "yo" };
 	
 	private static final Map<String, String> changeDownRules = new HashMap<String, String>();
 	static {
@@ -62,6 +63,77 @@ public class Spelling {
 				input = input.replace(rule.getKey(), rule.getValue());
 		}
 		return input;
+	}
+	
+	/**
+	 * Applies a verb modifier to its stem to get the past tense stem
+	 * @param stem the verb stem
+	 * @param modifier the verb modifier
+	 * @return the past tense stem
+	 */
+	public static String applyVerbModifier(String stem, String modifier) {
+		if (modifier == null)
+			return null;
+		
+		if (!modifier.startsWith("-"))
+			return modifier;
+		
+		// Verb may have auxillary words
+		String[] words = stem.split(" ");
+		String verb = words[0];
+		
+		String strippedStem = stripVerbStem(verb);
+		if (strippedStem != null) {
+			String pastStem = modifier.replace("-", strippedStem);
+			
+			// Re-append aux words
+			for (int w = 1; w < words.length; ++w)
+				pastStem = pastStem + " " + words[w];
+			
+			return pastStem;
+		}
+		
+		return modifier;
+		
+		/*
+		$words = explode(' ', $revision->getLemma());
+		$verb = $words[0];
+		array_shift($words);
+		$extra = implode(' ', $words);
+		$stem = rw_verbstem($verb);
+
+		if ($stem) {
+			$past = str_replace('-', $stem, $modifier);
+			return '-'.$past.($extra ? ' '.$extra : '');
+		}
+
+		return $revision->getModifier();
+	}*/
+	}
+	
+	/**
+	 * Strips a verb stem to remove the present tense specific ending, 'kora' -> 'ko'
+	 * @param stem the verb stem
+	 * @return the stripped stem
+	 */
+	public static String stripVerbStem(String stem) {
+		// Remove pronominal suffixes
+		for (String suffix : SUFFIXES) {
+			if (stem.endsWith(suffix)) {
+				stem = stem.substring(0, stem.length() - 2);
+				break;
+			}
+		}
+	    
+	    for (int ch = stem.length() - 1; ch >= 0; ch--) {
+	    	if (!Spelling.isVowel(stem.charAt(ch))) {
+	    		if (ch == 0)
+	    			return stem.substring(0, ch);
+	    		if (Spelling.isVowel(stem.charAt(ch - 1)))
+	    			return stem.substring(0, ch);
+	    	}
+	    }
+	    return null;
 	}
 	
 	/**
